@@ -1,16 +1,11 @@
-/// <reference path="../typings/react" />
+/// <reference path="../typings/react/react" />
+/// <reference path="../typings/react-dom/react-dom" />
+/// <reference path="../typings/jquery/jquery" />
+/// <reference path="./Components/CommentBox" />
 
-interface HelloWorldProps {
-  name: string;
+module Chatter {
+    ReactDOM.render(
+        <CommentBox url="/api/comments" pollInterval={2000} />,
+        document.getElementById('content')
+    );
 }
-
-var Hello = React.createClass<HelloWorldProps, any>({
-    render: function() {
-        return <div>Hello {this.props.name}</div>;
-    }
-});
- 
-ReactDOM.render(
-	<Hello name="World" />,
-    document.getElementById('container')
-);
