@@ -1,4 +1,16 @@
+/// <reference path="../typings/react" />
 
+interface HelloWorldProps {
+  name: string;
+}
 
-console.log('hi');
-var a: number = 54;
+var Hello = React.createClass<HelloWorldProps, any>({
+    render: function() {
+        return <div>Hello {this.props.name}</div>;
+    }
+});
+ 
+ReactDOM.render(
+	<Hello name="World" />,
+    document.getElementById('container')
+);

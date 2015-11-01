@@ -4,6 +4,6 @@
 		"sourceMap": true,
 		"watch": true,
 		"jsx": "react",
-		"out": "chatter.js"
+		"out": "scripts/chatter.js"
 	}
 }
