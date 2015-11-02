@@ -9,14 +9,18 @@ var Chatter;
     var Comment = (function (_super) {
         __extends(Comment, _super);
         function Comment(props) {
+            var _this = this;
             _super.call(this, props);
+            this.deleteThisComment = function () {
+                _this.props.onCommentDelete(_this.props.id);
+            };
         }
         Comment.prototype.rawMarkup = function () {
             var rawMarkup = marked(this.props.children.toString(), { sanitize: true });
             return { __html: rawMarkup };
         };
         Comment.prototype.render = function () {
-            return (React.createElement("div", {"className": "comment"}, React.createElement("h2", {"className": "commentAuthor"}, this.props.author), React.createElement("span", {"dangerouslySetInnerHTML": this.rawMarkup()})));
+            return (React.createElement("div", {"className": "comment col-xs-12"}, React.createElement("h4", {"className": "comment-author"}, this.props.author), React.createElement("button", {"className": "delete-comment-button btn btn-default btn-xs", "onClick": this.deleteThisComment}, "delete"), React.createElement("div", {"className": "clearfix"}), React.createElement("i", {"className": "fa fa-caret-right comment-caret"}), React.createElement("span", {"className": "comment-content", "dangerouslySetInnerHTML": this.rawMarkup()}), React.createElement("div", {"className": "clearfix"}), React.createElement("br", null)));
         };
         return Comment;
     })(React.Component);
@@ -31,8 +35,9 @@ var Chatter;
             _super.call(this, props);
         }
         CommentList.prototype.render = function () {
+            var _this = this;
             var commentNodes = this.props.data.map(function (comment) {
-                return (React.createElement(Chatter.Comment, {"author": comment.author}, comment.text));
+                return (React.createElement(Chatter.Comment, {"author": comment.author, "id": comment.id, "key": comment.id, "onCommentDelete": _this.props.onCommentDelete}, comment.text));
             });
             return (React.createElement("div", {"className": "commentList"}, commentNodes));
         };
@@ -61,7 +66,7 @@ var Chatter;
             };
         }
         CommentForm.prototype.render = function () {
-            return (React.createElement("form", {"className": "commentForm", "onSubmit": this.handleSubmit}, React.createElement("input", {"type": "text", "placeholder": "Your name", "ref": "author"}), React.createElement("input", {"type": "text", "placeholder": "Say something...", "ref": "text"}), React.createElement("input", {"type": "submit", "value": "Post"})));
+            return (React.createElement("form", {"className": "comment-form col-sm-6 col-md-5 col-lg-4", "onSubmit": this.handleSubmit}, React.createElement("div", {"className": "form-group"}, React.createElement("label", null, "Your name"), React.createElement("input", {"className": "form-control", "type": "text", "placeholder": "Your name", "ref": "author"})), React.createElement("div", {"className": "form-group"}, React.createElement("label", null, "Your comment"), React.createElement("input", {"className": "form-control", "type": "text", "placeholder": "Say something...", "ref": "text"})), React.createElement("div", {"className": "form-group"}, React.createElement("input", {"className": "form-control btn btn-primary", "type": "submit", "value": "Post"}))));
         };
         return CommentForm;
     })(React.Component);
@@ -109,6 +114,19 @@ var Chatter;
                     }
                 });
             };
+            this.handleCommentDelete = function (commentId) {
+                $.ajax({
+                    url: _this.props.url + '/' + commentId,
+                    dataType: 'json',
+                    type: 'DELETE',
+                    success: function (data) {
+                        _this.setState({ data: data });
+                    },
+                    error: function (xhr, status, err) {
+                        console.error(_this.props.url, status, err.toString());
+                    }
+                });
+            };
             this.componentDidMount = function () {
                 _this.loadCommentsFromServer();
                 setInterval(_this.loadCommentsFromServer, _this.props.pollInterval);
@@ -116,7 +134,7 @@ var Chatter;
             this.state = { data: [] };
         }
         CommentBox.prototype.render = function () {
-            return (React.createElement("div", {"className": "commentBox"}, React.createElement("h1", null, "Comments"), React.createElement(Chatter.CommentList, {"data": this.state.data}), React.createElement(Chatter.CommentForm, {"onCommentSubmit": this.handleCommentSubmit})));
+            return (React.createElement("div", {"className": "commentBox"}, React.createElement("h1", null, "Comments"), React.createElement("hr", null), React.createElement(Chatter.CommentList, {"data": this.state.data, "onCommentDelete": this.handleCommentDelete}), React.createElement("div", {"className": "clearfix"}), React.createElement("hr", null), React.createElement(Chatter.CommentForm, {"onCommentSubmit": this.handleCommentSubmit})));
         };
         return CommentBox;
     })(React.Component);

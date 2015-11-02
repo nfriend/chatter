@@ -30,10 +30,18 @@ module Chatter {
 		
 		render() {
 			return (
-				<form className="commentForm" onSubmit={this.handleSubmit}>
-					<input type="text" placeholder="Your name" ref="author" />
-					<input type="text" placeholder="Say something..." ref="text" />
-					<input type="submit" value="Post" />
+				<form className="comment-form col-sm-6 col-md-5 col-lg-4" onSubmit={this.handleSubmit}>
+					<div className="form-group">
+						<label>Your name</label>
+						<input className="form-control" type="text" placeholder="Your name" ref="author" />
+					</div>
+					<div className="form-group">
+						<label>Your comment</label>
+						<input className="form-control" type="text" placeholder="Say something..." ref="text" />
+					</div>
+					<div className="form-group">
+						<input className="form-control btn btn-primary" type="submit" value="Post" />
+					</div>
 				</form>
 			);
 		}

@@ -7,7 +7,10 @@ module Chatter {
 		data: Array<{
 			author: string;
 			text: string;
+			id: string;
 		}>;
+		
+		onCommentDelete: (commentId: string) => void;
 	}
 
 	export class CommentList extends React.Component<CommentListProps, any> {
@@ -18,7 +21,10 @@ module Chatter {
 		render() {
 			var commentNodes = this.props.data.map(comment => {
 				return (
-					<Comment author={comment.author}>{comment.text}</Comment>
+					<Comment author={comment.author} 
+							 id={comment.id} 
+							 key={comment.id}
+						     onCommentDelete={this.props.onCommentDelete}>{comment.text}</Comment>
 				);
 			});
 			
