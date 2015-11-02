@@ -93,6 +93,9 @@ var Chatter;
                 });
             };
             this.handleCommentSubmit = function (comment) {
+                var comments = _this.state.data;
+                var newComments = comments.concat([comment]);
+                _this.setState({ data: newComments });
                 $.ajax({
                     url: _this.props.url,
                     dataType: 'json',
