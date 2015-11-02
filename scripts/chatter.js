@@ -45,10 +45,23 @@ var Chatter;
     var CommentForm = (function (_super) {
         __extends(CommentForm, _super);
         function CommentForm(props) {
+            var _this = this;
             _super.call(this, props);
+            this.handleSubmit = function (e) {
+                e.preventDefault();
+                var author = _this.refs.author.value.trim();
+                var text = _this.refs.text.value.trim();
+                if (!text || !author) {
+                    return;
+                }
+                _this.props.onCommentSubmit({ author: author, text: text });
+                _this.refs.author.value = '';
+                _this.refs.text.value = '';
+                return;
+            };
         }
         CommentForm.prototype.render = function () {
-            return (React.createElement("div", {"className": "commentForm"}, "Hello, world! I am a CommentForm"));
+            return (React.createElement("form", {"className": "commentForm", "onSubmit": this.handleSubmit}, React.createElement("input", {"type": "text", "placeholder": "Your name", "ref": "author"}), React.createElement("input", {"type": "text", "placeholder": "Say something...", "ref": "text"}), React.createElement("input", {"type": "submit", "value": "Post"})));
         };
         return CommentForm;
     })(React.Component);
@@ -79,6 +92,20 @@ var Chatter;
                     }
                 });
             };
+            this.handleCommentSubmit = function (comment) {
+                $.ajax({
+                    url: _this.props.url,
+                    dataType: 'json',
+                    type: 'POST',
+                    data: comment,
+                    success: function (data) {
+                        _this.setState({ data: data });
+                    },
+                    error: function (xhr, status, err) {
+                        console.error(_this.props.url, status, err.toString());
+                    }
+                });
+            };
             this.componentDidMount = function () {
                 _this.loadCommentsFromServer();
                 setInterval(_this.loadCommentsFromServer, _this.props.pollInterval);
@@ -86,7 +113,7 @@ var Chatter;
             this.state = { data: [] };
         }
         CommentBox.prototype.render = function () {
-            return (React.createElement("div", {"className": "commentBox"}, React.createElement("h1", null, "Comments"), React.createElement(Chatter.CommentList, {"data": this.state.data}), React.createElement(Chatter.CommentForm, null)));
+            return (React.createElement("div", {"className": "commentBox"}, React.createElement("h1", null, "Comments"), React.createElement(Chatter.CommentList, {"data": this.state.data}), React.createElement(Chatter.CommentForm, {"onCommentSubmit": this.handleCommentSubmit})));
         };
         return CommentBox;
     })(React.Component);

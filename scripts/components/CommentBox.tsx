@@ -32,6 +32,21 @@ module Chatter {
 			});
 		}
 		
+		handleCommentSubmit = (comment: { author: string; text: string }) => {
+			$.ajax({
+				url: this.props.url,
+				dataType: 'json',
+				type: 'POST',
+				data: comment,
+				success: (data) => {
+					this.setState({data: data});
+				},
+				error: (xhr, status, err) => {
+					console.error(this.props.url, status, err.toString());	
+				}
+			});
+		}
+		
 		componentDidMount = () => {
 			this.loadCommentsFromServer();
 			setInterval(this.loadCommentsFromServer, this.props.pollInterval);
@@ -42,7 +57,7 @@ module Chatter {
 				<div className="commentBox">
 					<h1>Comments</h1>
 					<CommentList data={this.state.data} />
-					<CommentForm />
+					<CommentForm onCommentSubmit={this.handleCommentSubmit} />
 				</div>
 			);
 		}
